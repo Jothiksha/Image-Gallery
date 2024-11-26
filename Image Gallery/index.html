@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Gallery</title>
+  <style>
+    /* Resetting default styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Body styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #ffcad4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #444;
+      overflow-x: hidden;
+    }
+
+    /* Navbar styles */
+    .navbar {
+      width: 100%;
+      background: #2c2f33;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .navbar a {
+      color: #e3e4e8;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #f48fb1;
+      text-decoration: underline;
+    }
+
+    /* Banner styling */
+    .banner {
+      width: 100%;
+      height: 300px;
+      background: url('./assets/images/banner.jpg') no-repeat center center/cover;
+      margin-top: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Gallery container */
+    .gallery-container {
+      padding: 40px 20px;
+      width: 90%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      background-color: #f0f0f5;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .gallery-container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Gallery grid styling */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .gallery-item {
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Lightbox modal */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .lightbox img {
+      max-width: 80%;
+      max-height: 80%;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #ffffff;
+      font-size: 35px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .close:hover {
+      transform: rotate(90deg);
+    }
+    .navigation button {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 30px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .navigation button:hover {
+      transform: scale(1.2);
+    }
+    .navigation {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Carousel styles */
+    .carousel {
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      height: 400px;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.4s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .carousel img:hover {
+      transform: scale(1.05);
+    }
+    /* Footer styles */
+    .footer {
+      width: 100%;
+      background-color: #2c2f33;
+      color: #e3e4e8;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: 20px;
+      position: relative;
+    }
+    .footer p {
+      font-size: 0.9rem;
+    }
+    .footer a {
+      color: #f48fb1;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.3s ease;
+    }
+    .footer a:hover {
+      color: #ffcad4;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="#home">Home</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner" id="home">
+    <h1>Explore Our Stunning Gallery</h1>
+  </div>
+
+  <!-- Carousel Section -->
+  <div class="carousel" id="carousel">
+    <img src="./assets/images/carousel1.jpg" alt="Carousel Image 1">
+    <img src="./assets/images/carousel2.jpg" alt="Carousel Image 2">
+    <img src="./assets/images/carousel3.jpg" alt="Carousel Image 3">
+    <img src="./assets/images/carousel4.jpg" alt="Carousel Image 4">
+    <img src="./assets/images/carousel5.jpg" alt="Carousel Image 5">
+    <img src="./assets/images/carousel6.jpg" alt="Carousel Image 6">
+  </div>
+
+  <!-- Gallery Container -->
+  <div class="gallery-container" id="gallery">
+    <h2>Image Gallery</h2>
+    <div class="gallery">
+      <div class="gallery-item" onclick="showImage(0)">
+        <img src="./assets/images/image1.jpg" alt="Image 1">
+      </div>
+      <div class="gallery-item" onclick="showImage(1)">
+        <img src="./assets/images/image2.jpg" alt="Image 2">
+      </div>
+      <div class="gallery-item" onclick="showImage(2)">
+        <img src="./assets/images/image3.jpg" alt="Image 3">
+      </div>
+      <div class="gallery-item" onclick="showImage(3)">
+        <img src="./assets/images/image4.jpg" alt="Image 4">
+      </div>
+      <div class="gallery-item" onclick="showImage(4)">
+        <img src="./assets/images/image5.jpg" alt="Image 5">
+      </div>
+      <div class="gallery-item" onclick="showImage(5)">
+        <img src="./assets/images/image6.jpg" alt="Image 6">
+      </div>
+      <div class="gallery-item" onclick="showImage(6)">
+        <img src="./assets/images/image7.jpg" alt="Image 7">
+      </div>
+      <div class="gallery-item" onclick="showImage(7)">
+        <img src="./assets/images/image8.jpg" alt="Image 8">
+      </div>
+      <div class="gallery-item" onclick="showImage(8)">
+        <img src="./assets/images/image9.jpg" alt="Image 9">
+      </div>
+      <div class="gallery-item" onclick="showImage(9)">
+        <img src="./assets/images/image10.jpg" alt="Image 10">
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-image" src="" alt="Large view">
+    <div class="navigation">
+      <button onclick="prevImage()">&#10094;</button>
+      <button onclick="nextImage()">&#10095;</button>
+    </div>
+  </div>
+   <!-- Footer Section -->
+   <div class="footer">
+    <p>&copy; 2023 Enhanced Image Gallery. All Rights Reserved.</p>
+    <p>Follow us:
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a> |
+      <a href="#">Instagram</a>
+    </p>
+  </div>
+  <script>
+    const images = [
+      "./assets/images/image1.jpg",
+      "./assets/images/image2.jpg",
+      "./assets/images/image3.jpg",
+      "./assets/images/image4.jpg",
+      "./assets/images/image5.jpg",
+      "./assets/images/image6.jpg",
+      "./assets/images/image7.jpg",
+      "./assets/images/image8.jpg",
+      "./assets/images/image9.jpg",
+      "./assets/images/image10.jpg"
+    ];
+    let currentIndex = 0;
+
+    function showImage(index) {
+      currentIndex = index;
+      document.getElementById("lightbox").style.display = "flex";
+      document.getElementById("lightbox-image").src = images[currentIndex];
+    }
+
+    function closeLightbox() {
+      document.getElementById("lightbox").style.display = "none";
+    }
+
+    function prevImage() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      document.getElementById("lightbox-image").src = images[currentIndex];
+    }
+
+    function nextImage() {
+      currentIndex = (currentIndex + 1) % images.length;
+      document.getElementById("lightbox-image").src = images[currentIndex];
+    }
+
+    let scrollAmount = 0;
+    const carousel = document.getElementById("carousel");
+
+    function scrollCarousel() {
+      scrollAmount += carousel.offsetWidth;
+      if (scrollAmount >= carousel.scrollWidth) {
+        scrollAmount = 0;
+      }
+      carousel.scrollTo({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+    setInterval(scrollCarousel, 3000);
+  </script>
+</body>
+</html>
